@@ -23,7 +23,7 @@ The following ros packages are required:
 cd /your/catkin_ws/src
 git clone https://github.com/koide3/ndt_omp
 git clone https://github.com/SMRT-AIST/fast_gicp --recursive
-git clone https://github.com/koide3/hdl_localization
+git clone git@github.com:snt-arg/hdl_localization.git
 git clone https://github.com/koide3/hdl_global_localization
 
 cd /your/catkin_ws
