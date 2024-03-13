@@ -2,10 +2,11 @@
 <launch>
   <!-- arguments -->
   <arg name="nodelet_manager" default="velodyne_nodelet_manager" />
-  <arg name="points_topic" default="/velodyne_points" />
+  <arg name="points_topic" default="/platform/velodyne_points" />
   <!-- input clouds are transformed in odom_child_frame, and then localization is performed in that frame -->
   <!-- this is useful to match the LIDAR and IMU coodinate systems -->
-  <arg name="odom_child_frame_id" default="velodyne" />
+  <arg name="odom_child_frame_id" default="base_footprint" /> <!-- body for real dataset -->
+<param name="use_sim_time" value="true" />
 
   <!-- optional arguments -->
   <arg name="use_imu" default="false" />
@@ -13,10 +14,13 @@
   <arg name="invert_imu_gyro" default="false" />
   <arg name="use_global_localization" default="true" />
   <arg name="imu_topic" default="/imu/data" />
-  <arg name="enable_robot_odometry_prediction" value="false" />
+  <arg name="enable_robot_odometry_prediction" value="true" />
   <arg name="robot_odom_frame_id" value="odom" />
   <arg name="plot_estimation_errors" value="false" />
 
+
+<node pkg="tf" type="static_transform_publisher" name="base_footprint_to_velodyne_broadcaster"
+        args="0 0 0.125 0 0 0 1 base_footprint velodyne 100" />
   <include file="$(find hdl_global_localization)/launch/hdl_global_localization.launch" if="$(arg use_global_localization)" />
 
   <!-- in case you use velodyne_driver, comment out the following line -->
@@ -24,7 +28,7 @@
 
     <!-- globalmap_server_nodelet -->
     <node pkg="nodelet" type="nodelet" name="globalmap_server_nodelet" args="load hdl_localization/GlobalmapServerNodelet $(arg nodelet_manager)">
-      <param name="globalmap_pcd" value="$(find hdl_localization)/data/map.pcd" />
+      <param name="globalmap_pcd" value="$(find hdl_localization)/data/SE4/T5.pcd" />
       <param name="convert_utm_to_local" value="true" />
       <param name="downsample_resolution" value="0.1" />
     </node>
