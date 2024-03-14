@@ -10,10 +10,11 @@
 #include <pcl/registration/registration.h>
 
 namespace kkl {
-  namespace alg {
-template<typename T, class System> class UnscentedKalmanFilterX;
-  }
+namespace alg {
+template <typename T, class System>
+class UnscentedKalmanFilterX;
 }
+}  // namespace kkl
 
 namespace hdl_localization {
 
@@ -95,7 +96,7 @@ private:
   boost::optional<Eigen::Matrix4f> odom_pred_error;
 
   pcl::Registration<PointT, PointT>::Ptr registration;
-  };
+};
 
 }  // namespace hdl_localization
 

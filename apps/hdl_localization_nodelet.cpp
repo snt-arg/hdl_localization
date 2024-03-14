@@ -48,21 +48,21 @@ public:
 
     initialize_params();
 
-    robot_odom_frame_id = private_nh.param<std::string>("robot_odom_frame_id", "odom");
+    robot_odom_frame_id = private_nh.param<std::string>("robot_odom_frame_id", "robot_odom");
     odom_child_frame_id = private_nh.param<std::string>("odom_child_frame_id", "base_link");
 
-    use_imu = private_nh.param<bool>("use_imu", false);
+    use_imu = private_nh.param<bool>("use_imu", true);
     invert_acc = private_nh.param<bool>("invert_acc", false);
     invert_gyro = private_nh.param<bool>("invert_gyro", false);
     if (use_imu) {
       NODELET_INFO("enable imu-based prediction");
       imu_sub = mt_nh.subscribe("/gpsimu_driver/imu_data", 256, &HdlLocalizationNodelet::imu_callback, this);
     }
-    points_sub = mt_nh.subscribe("/platform/velodyne_points", 5, &HdlLocalizationNodelet::points_callback, this);
+    points_sub = mt_nh.subscribe("/velodyne_points", 5, &HdlLocalizationNodelet::points_callback, this);
     globalmap_sub = nh.subscribe("/globalmap", 1, &HdlLocalizationNodelet::globalmap_callback, this);
     initialpose_sub = nh.subscribe("/initialpose", 8, &HdlLocalizationNodelet::initialpose_callback, this);
 
-    pose_pub = nh.advertise<nav_msgs::Odometry>("/hdl_odom", 5, false);
+    pose_pub = nh.advertise<nav_msgs::Odometry>("/odom", 5, false);
     aligned_pub = nh.advertise<sensor_msgs::PointCloud2>("/aligned_points", 5, false);
     status_pub = nh.advertise<ScanMatchingStatus>("/status", 5, false);
 
@@ -359,7 +359,6 @@ private:
     const auto& q = pose_msg->pose.pose.orientation;
     pose_estimator.reset(new hdl_localization::PoseEstimator(
       registration,
-      ros::Time::now(),
       Eigen::Vector3f(p.x, p.y, p.z),
       Eigen::Quaternionf(q.w, q.x, q.y, q.z),
       private_nh.param<double>("cool_time_duration", 0.5)));
